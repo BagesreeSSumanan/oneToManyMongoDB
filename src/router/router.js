@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const {createImage,createTutorial}= require('../controller/controller');
+const {createImage,createTutorial,DeleteTutorial}= require('../controller/controller');
 
 router.post("/createImage", async (req, res) => {
   const { tutorialId, url, caption } = req.body;
@@ -22,4 +22,6 @@ router.post("/createImage", async (req, res) => {
   }
 });
 router.post("/createTutorial", createTutorial);
+
+router.delete("/DeleteTutorial/:id", DeleteTutorial);
 module.exports = router;

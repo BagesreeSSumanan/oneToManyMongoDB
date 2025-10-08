@@ -45,5 +45,30 @@ const createImage = async (tutorialId, image) => {
   }
 };
 
+const DeleteTutorial = async (req, res) => {
+  try {
+    const { id } = req.params;
 
-module.exports = {createTutorial,createImage}
+    const deletedTutorial = await Tutorial.findByIdAndDelete(id, { useFindAndModify: false });
+
+    if (!deletedTutorial) {
+      return res.status(404).json({ msg: "Tutorial not found" });
+    }
+
+    if (deletedTutorial.images && deletedTutorial.images.length > 0) {
+      const imageIds = deletedTutorial.images.map(img => img._id);
+      await Images.deleteMany({ _id: { $in: imageIds } });
+    }
+
+    res.status(200).json({
+      msg: "Tutorial and associated images deleted successfully",
+      data: deletedTutorial
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ msg: "Something went wrong", error: error.message });
+  }
+};
+
+
+module.exports = {createTutorial,createImage,DeleteTutorial}
